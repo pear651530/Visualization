@@ -1,42 +1,44 @@
-# Marching Cubes 體積渲染器 (Volume Renderer)
+# Marching Cubes 體積渲染器 (Static Multi-Layer Volume Renderer)
 
-這是一個基於 **OpenGL 3.3+** 與 **Marching Cubes 演算法** 實作的體積資料視覺化工具。本專案能夠讀取 `.raw` 格式的醫療或科學掃描數據（如 Carp, foot, BluntFin），計算指定等值（Isovalue）的三角面網格，並提供即時的切片（Slicing）與光照渲染功能。
+這是一個基於 **OpenGL 3.3** 核心配置開發的體積資料視覺化系統。本專案實作了經典的 **Marching Cubes 演算法**，能將 3D 的 `.raw` 原始二進位數據轉換為三角面網格，並支援多層等值面（Iso-surfaces）的同步渲染與互動式平面裁切。
 
-## 🌟 核心技術亮點
+## 核心技術亮點
 
 ### 1. Marching Cubes 演算法實作
-* **等值面提取**：完整實作了從 $256^3$ 網格單元中提取等值面的邏輯。
-* **線性插值**：透過 `VertexInterp` 函數在網格邊緣進行線性插值，精確計算交點座標以獲得平滑的表面。
-* **查表加速**：利用 `edgeTable` 與 `triTable` 快速檢索 256 種可能的立方體相交組態。
+* **網格提取**：針對 $256^3$ 的資料單元進行掃描，透過 `edgeTable` 與 `triTable` 快速查找三角面生成配置。
+* **線性插值**：利用 `VertexInterp` 精確計算等值面穿過網格邊緣的交點，確保模型表面的平滑度。
 
-### 2. 即時裁切與切片系統 (Clipping & Slicing)
-透過 Vertex Shader (`vex.vs`) 中的平面方程式 $ax + by + cz + d = 0$ 進行動態裁切：
-* **Whole**: 顯示完整生成的等值面模型。
-* **Cross**: 裁切並隱藏平面一側的模型。
-* **Slice**: 僅顯示平面附近特定厚度內的薄層切片。
+### 2. 多層渲染與透明度管理
+* **靜態預處理**：程式啟動時會根據預設等值（如 30 與 200）預先計算所有網格數據，並快取於 VBO 中以提升繪圖效能。
+* **渲染順序優化**：系統採用特定的繪製順序，先繪製不透明層（Alpha=1.0，如骨骼），再疊加半透明層（Alpha=0.5，如皮膚），以呈現正確的空間層次感。
 
-### 3. 視覺與光照效果
-* **Phong Lighting Model**: 在 Fragment Shader (`fram.fs`) 實作環境光、漫反射與鏡面反射。
-* **多層渲染**：支援同時生成多個不同 Isovalue 的模型，並透過 Alpha Blending 實現半透明疊加效果。
+### 3. 動態裁切系統 (Shader-based Clipping)
+透過 Vertex Shader 中的平面方程式 $ax + by + cz + D = 0$ 實作即時裁切：
+* **Whole**: 顯示完整物件。
+* **Cross**: 裁切平面一側的網格，顯示內部構造。
+* **Slice**: 僅顯示平面附近的薄層網格，模擬醫學影像的切片效果。
 
-## UI 操作指南 (Dear ImGui)
+### 4. 視覺效果
+* **Phong Lighting Model**: 在 Fragment Shader 實作環境光、漫反射與鏡面反射，強化物體的體積感。
+* **數據直方圖**: 利用 Dear ImGui 呈現資料分布的對數直方圖，協助使用者精確選擇等值面數值。
 
-### 生成模型 (重要：此步驟不會自動更新)
-由於 Marching Cubes 運算量較大，系統採**手動觸發**機制：
-1. **Isovalue**: 在輸入框設定想要提取的數值（例如 30 代表軟組織，較高數值代表骨骼）。
-2. **Color Picker**: 選擇該等值面的顏色與透明度 (Alpha)。
-3. **OK!**: 點擊按鈕後，程式才會計算並渲染出新的模型網格。
+## 操作指南
 
-### 攝影機與環境控制
-* **Camera Transform**: 支援 X/Y/Z 位移與 Pitch/Yaw/Roll 旋轉。
-* **Plane Control**: 調整滑桿 `a, b, c` 改變切面方向，`d` 改變切面位置。
-* **Histogram**: 顯示資料數值分布的直方圖，輔助選擇合適的 Isovalue。
+### 攝影機控制 (Camera)
+* **X / Y / Z 滑動條**: 控制攝影機在世界座標中的位置平移。
+* **Pitch / Yaw / Roll**: 調整攝影機的觀察角度。
+* **Reset**: 一鍵重設攝影機與視角矩陣。
+
+### 裁切平面控制 (Clipping Controls)
+* **a / c / b 滑桿**: 調整平面法向量的方向。
+* **d 滑桿**: 調整平面與原點的偏移距離 $D$。
+* **Mode 選擇**: 切換 Whole (0), Cross (1), Slice (2) 顯示模式。
 
 ## 開發環境
 * **語言**: C++
-* **圖形庫**: OpenGL 3.3 (GLAD / GLFW)
+* **圖形庫**: OpenGL 3.3 Core Profile (GLAD / GLFW)
 * **數學庫**: GLM
 * **UI 庫**: Dear ImGui
-* **資料格式**: 8-bit 無符號整數原始體積數據 (.raw)
+* **支援格式**: 8-bit 無符號整數原始體積數據 (.raw)
 
 ---
