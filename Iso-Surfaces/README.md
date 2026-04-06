@@ -1,54 +1,42 @@
 # Marching Cubes 體積渲染器 (Volume Renderer)
 
-這是一個基於 **OpenGL 3.3+** 與 **Marching Cubes 演算法** 實作的體積資料視覺化工具。本專案能夠讀取 `.raw` 格式的醫療或科學掃描數據，計算指定等值（Isovalue）的三角面網格，並提供即時的切片（Slicing）與光照渲染功能。
+這是一個基於 **OpenGL 3.3+** 與 **Marching Cubes 演算法** 實作的體積資料視覺化工具。本專案能夠讀取 `.raw` 格式的醫療或科學掃描數據（如 Carp, foot, BluntFin），計算指定等值（Isovalue）的三角面網格，並提供即時的切片（Slicing）與光照渲染功能。
 
-## 核心功能
+## 🌟 核心技術亮點
 
-* [cite_start]**Marching Cubes 演算法實作**：完整實作了從 $256^3$ 網格單元中提取等值面的邏輯 [cite: 92, 114]。
-* [cite_start]**多層等值面渲染**：支援同時設定多個不同的等值與顏色，並處理半透明（Alpha Blending）混合效果 [cite: 114, 188]。
-* **即時橫切面控制 (Clipping & Slicing)**：
-    * **Whole**: 顯示完整模型。
-    * [cite_start]**Cross**: 顯示特定平面下的截斷模型 [cite: 14, 137]。
-    * [cite_start]**Slice**: 僅顯示特定平面附近的薄層切片 [cite: 13, 138]。
-* [cite_start]**互動式 UI 介面**：整合 **Dear ImGui**，提供直方圖顯示、攝影機變換與平面參數調整 [cite: 134, 141, 146]。
-* [cite_start]**Phong 光照模型**：於 Fragment Shader 實作環境光、漫反射與鏡面反射 [cite: 5, 7, 8]。
+### 1. Marching Cubes 演算法實作
+* **等值面提取**：完整實作了從 $256^3$ 網格單元中提取等值面的邏輯。
+* **線性插值**：透過 `VertexInterp` 函數在網格邊緣進行線性插值，精確計算交點座標以獲得平滑的表面。
+* **查表加速**：利用 `edgeTable` 與 `triTable` 快速檢索 256 種可能的立方體相交組態。
 
-## 技術棧
+### 2. 即時裁切與切片系統 (Clipping & Slicing)
+透過 Vertex Shader (`vex.vs`) 中的平面方程式 $ax + by + cz + d = 0$ 進行動態裁切：
+* **Whole**: 顯示完整生成的等值面模型。
+* **Cross**: 裁切並隱藏平面一側的模型。
+* **Slice**: 僅顯示平面附近特定厚度內的薄層切片。
 
-* [cite_start]**Graphics API**: OpenGL 330 Core Profile [cite: 1, 10]
-* [cite_start]**Windowing/Input**: GLFW & GLAD [cite: 16, 186]
-* [cite_start]**Math**: GLM (OpenGL Mathematics) [cite: 16]
-* [cite_start]**UI**: Dear ImGui [cite: 16]
-* [cite_start]**Loader**: `stb_image` & `ifstream` (用於二進位原始數據讀取) [cite: 16, 192]
+### 3. 視覺與光照效果
+* **Phong Lighting Model**: 在 Fragment Shader (`fram.fs`) 實作環境光、漫反射與鏡面反射。
+* **多層渲染**：支援同時生成多個不同 Isovalue 的模型，並透過 Alpha Blending 實現半透明疊加效果。
 
-## 控制指南
+## UI 操作指南 (Dear ImGui)
 
-### 攝影機操作 (Camera)
-* [cite_start]**X / Y / Z**: 平移攝影機位置 [cite: 142, 144]。
-* [cite_start]**Pitch / Yaw / Roll**: 旋轉攝影機視角方向 [cite: 146, 158]。
-* [cite_start]**Reset**: 一鍵回復初始攝影機狀態 [cite: 166]。
+### 生成模型 (重要：此步驟不會自動更新)
+由於 Marching Cubes 運算量較大，系統採**手動觸發**機制：
+1. **Isovalue**: 在輸入框設定想要提取的數值（例如 30 代表軟組織，較高數值代表骨骼）。
+2. **Color Picker**: 選擇該等值面的顏色與透明度 (Alpha)。
+3. **OK!**: 點擊按鈕後，程式才會計算並渲染出新的模型網格。
 
-### 平面切片控制 (Clipping)
-* [cite_start]**a / b / c**: 調整切面法向量的方向 [cite: 135]。
-* [cite_start]**d**: 調整平面的位移距離 $D$ [cite: 136]。
-* [cite_start]**Mode 切換**: 選擇整體、截斷或薄層切片模式 [cite: 137, 139]。
+### 攝影機與環境控制
+* **Camera Transform**: 支援 X/Y/Z 位移與 Pitch/Yaw/Roll 旋轉。
+* **Plane Control**: 調整滑桿 `a, b, c` 改變切面方向，`d` 改變切面位置。
+* **Histogram**: 顯示資料數值分布的直方圖，輔助選擇合適的 Isovalue。
 
-### 等值面生成
-1.  [cite_start]**Isovalue**: 輸入想要提取的數值（如 30, 110 等） [cite: 139]。
-2.  [cite_start]**Color Picker**: 選擇該層面的顏色與透明度 [cite: 139]。
-3.  [cite_start]**OK!**: 執行 Marching Cubes 運算並生成網格 [cite: 140]。
-
-## 檔案結構
-
-* [cite_start]`vex.vs`: 頂點著色器，處理座標變換與平面裁切計算 [cite: 10, 15]。
-* [cite_start]`fram.fs`: 片段著色器，處理材質光照與透明度渲染 [cite: 1, 9]。
-* [cite_start]`程式碼法二_自由.txt`: C++ 主程式，包含 Marching Cubes 核心邏輯、UI 邏輯與數據讀取 [cite: 16, 69]。
-
-## 演算法細節
-
-[cite_start]專案中的 `Polygonise` 函數會根據 8 個頂點相對於等值面的狀態，查詢 `edgeTable` 與 `triTable` [cite: 23, 27, 69]。若發生交會，則透過 `VertexInterp` 進行線性插值以精確計算交點座標：
-
-[cite_start]$$p = p_1 + \frac{isolevel - val_{p1}}{val_{p2} - val_{p1}} \times (p_2 - p_1)$$ [cite: 22]
+## 開發環境
+* **語言**: C++
+* **圖形庫**: OpenGL 3.3 (GLAD / GLFW)
+* **數學庫**: GLM
+* **UI 庫**: Dear ImGui
+* **資料格式**: 8-bit 無符號整數原始體積數據 (.raw)
 
 ---
-[cite_start]*本專案預設讀取 $256 \times 256 \times 256$ 的體積數據 [cite: 92]。*
