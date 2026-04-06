@@ -1,6 +1,8 @@
 # 3D 體積渲染器 (Ray Casting Volume Renderer)
 
-這是一個基於 **OpenGL 3.3** 開發的即時體積渲染系統。本專案採用 **Ray Casting (光線投射法)** 技術，直接對 3D 體積資料（`.raw` 格式）進行採樣與著色，而非轉化為傳統網格。系統支援自定義傳遞函數（Transfer Function）與動態光照計算。
+這是一個基於 **OpenGL 3.3** 開發的即時體積渲染系統。本專案採用 **Ray Casting (光線投射法)** 技術，直接對 3D 體積資料（`.raw` 格式）進行採樣與著色，而非轉化為傳統網格。系統支援自定義傳遞函數（Transfer Function）與動態光照計算。<br>
+![](imgs/carp.png)<br>
+![](imgs/bonsai.png)
 
 ## 核心技術亮點
 
