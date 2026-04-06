@@ -17,14 +17,6 @@
 * **等值面管理**：可動態新增（IN!）或刪除多組等值面，並即時預覽其透明度曲線。
 * **數據直方圖**：透過對數縮放（log10）呈現資料分布，輔助使用者尋找具備物理意義的數值區間。
 
-## 技術棧
-
-* **Graphics API**: OpenGL 3.3 Core Profile
-* **Math**: GLM (OpenGL Mathematics)
-* **UI Framework**: Dear ImGui
-* **Windowing**: GLFW & GLAD
-* **Volume Data**: 8-bit Raw data (256x256x256)
-
 ## 控制指南
 
 ### 1. 數據與顯示
@@ -45,3 +37,10 @@
 - 內部採用中心差分：`dxyz.x = (integerData[i+1][j][k] - integerData[i-1][j][k]) / 2`。
 
 這些梯度資訊被正規化並存入 3D 紋理，作為 Shader 中光照計算所需的表面法向量（Normal）。
+
+## 開發環境
+* **語言**: C++
+* **圖形庫**: OpenGL 3.3 Core Profile (GLAD / GLFW)
+* **數學庫**: GLM
+* **UI 庫**: Dear ImGui
+* **支援格式**: 8-bit 無符號整數原始體積數據 (.raw)
