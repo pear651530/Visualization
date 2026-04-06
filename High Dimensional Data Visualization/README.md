@@ -1,7 +1,7 @@
 # 2D 流場視覺化與橢圓張量分析系統
 
 這是一個基於 **OpenGL 3.3** 開發的高階流場可視化工具。本專案結合了資料科學中的 **PCA (主成分分析)** 與電腦圖學中的 **幾何著色器 (Geometry Shader)** 技術，能夠將複雜的 2D 向量場數據轉化為具備物理特徵意義的動態流線與結構化橢圓張量圖。<br>
-![](imgs/High Dimensional Data.png)
+![](imgs/High-Dimensional-Data.png)
 
 ## 核心技術亮點
 
