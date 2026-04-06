@@ -13,7 +13,7 @@
 * [cite_start]**互動式 UI 介面**：整合 **Dear ImGui**，提供直方圖顯示、攝影機變換與平面參數調整 [cite: 134, 141, 146]。
 * [cite_start]**Phong 光照模型**：於 Fragment Shader 實作環境光、漫反射與鏡面反射 [cite: 5, 7, 8]。
 
-## 🛠️ 技術棧
+## 技術棧
 
 * [cite_start]**Graphics API**: OpenGL 330 Core Profile [cite: 1, 10]
 * [cite_start]**Windowing/Input**: GLFW & GLAD [cite: 16, 186]
@@ -51,3 +51,4 @@
 [cite_start]$$p = p_1 + \frac{isolevel - val_{p1}}{val_{p2} - val_{p1}} \times (p_2 - p_1)$$ [cite: 22]
 
 ---
+[cite_start]*本專案預設讀取 $256 \times 256 \times 256$ 的體積數據 [cite: 92]。*
