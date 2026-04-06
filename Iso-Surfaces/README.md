@@ -14,9 +14,12 @@
 
 ### 3. 動態裁切系統 (Shader-based Clipping)
 透過 Vertex Shader 中的平面方程式 $ax + by + cz + D = 0$ 實作即時裁切：
-* **Whole**: 顯示完整物件。
-* **Cross**: 裁切平面一側的網格，顯示內部構造。
-* **Slice**: 僅顯示平面附近的薄層網格，模擬醫學影像的切片效果。
+* **Whole**: 顯示完整物件。<br>
+  ![](imgs/Whole.png)
+* **Cross**: 裁切平面一側的網格，顯示內部構造。<br>
+  ![](imgs/Cross.png)
+* **Slice**: 僅顯示平面附近的薄層網格，模擬醫學影像的切片效果。<br>
+  ![](imgs/Slice.png)
 
 ### 4. 視覺效果
 * **Phong Lighting Model**: 在 Fragment Shader 實作環境光、漫反射與鏡面反射，強化物體的體積感。
