@@ -1,4 +1,4 @@
-# 電腦圖學與科學視覺化實作集 (Computer Graphics & Visualization Collection)
+# 科學視覺化實作集 (Visualization Collection)
 本倉庫整合了五項核心電腦圖學實作，範疇涵蓋高階的科學視覺化演算法。透過 **C++** 與 **OpenGL API**，探索如何將複雜的物理數據（如 3D 體積掃描、流體場向量）轉化為直覺且具備互動性的視覺表現。
 
 ---
